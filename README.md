@@ -1,6 +1,6 @@
 # messagingapp
 built in android
-a real messaging app would require much more code to handle things like authentication, error handling, and storing messages in a database. It's also worth noting that this example uses a fictional Message and MessageListener class, and you would need to define these classes and implement the necessary functionality.
+a real messaging app has to handle things like authentication, error handling, and storing messages in a database. It's also worth noting that this example uses a fictional Message and MessageListener class, and you would need to define these classes and implement the necessary functionality.
 code uses a fictional ServerAPI class to send a login request to the server and handle the response. The User class is also a fictional class that represents a user of the app. You would need to define these classes and implement the necessary functionality.
 To store messages in a database in the messaging app from my previous examples, you will need to do the following:
 
