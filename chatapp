@@ -1,0 +1,172 @@
+// Create a message object
+Message message = new Message();
+message.setText("Hello, bobo!");
+
+// Send the message to the server
+sendMessage(message);
+
+// Implement a listener to receive messages from the server
+MessageListener messageListener = new MessageListener() {
+    @Override
+    public void onMessageReceived(Message message) {
+        // Do something with the message
+        displayMessage(message);
+    }
+};
+
+// Register the listener with the server
+registerMessageListener(messageListener);
+
+//authentication:
+// Set up the login form
+EditText usernameField = findViewById(R.id.username);
+EditText passwordField = findViewById(R.id.password);
+Button loginButton = findViewById(R.id.login_button);
+
+// Add an event listener to the login button
+loginButton.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+        // Get the username and password from the form
+        String username = usernameField.getText().toString();
+        String password = passwordField.getText().toString();
+
+        // Send a login request to the server
+        login(username, password);
+    }
+});
+private void login(String username, String password) {
+    // Send a request to the server to log in with the given credentials
+    ServerAPI api = ServerAPI.getInstance();
+    api.login(username, password, new Callback<User>() {
+        @Override
+        public void onResponse(Call<User> call, Response<User> response) {
+            if (response.isSuccessful()) {
+                // If the login is successful, store the user object and go to the main screen
+                User user = response.body();
+                storeUser(user);
+                goToMainScreen();
+            } else {
+                // If the login fails, show an error message
+                showError("Invalid username or password");
+            }
+        }
+
+        @Override
+        public void onFailure(Call<User> call, Throwable t) {
+            // If there is a network error, show an error message
+            showError("Error connecting to server");
+        }
+    });
+}
+// Create a connection to the database
+String url = "jdbc:mysql://localhost:3306/mydatabase";
+String username = "myusername";
+String password = "mypassword";
+Connection conn = DriverManager.getConnection(url, username, password);
+
+// Create a prepared statement to insert a message into the database
+String sql = "INSERT INTO messages (sender, receiver, text) VALUES (?, ?, ?)";
+PreparedStatement stmt = conn.prepareStatement(sql);
+
+// Set the values of the prepared statement
+stmt.setString(1, message.getSender());
+stmt.setString(2, message.getReceiver());
+stmt.setString(3, message.getText());
+
+// Execute the statement
+stmt.executeUpdate();
+// Create a connection to the database
+String url = "jdbc:mysql://localhost:3306/mydatabase";
+String username = "myusername";
+String password = "mypassword";
+Connection conn = DriverManager.getConnection(url, username, password);
+
+// Create a prepared statement to select all messages from the database
+String sql = "SELECT * FROM messages";
+PreparedStatement stmt = conn.prepareStatement(sql);
+
+// Execute the statement and get the result set
+ResultSet rs = stmt.executeQuery();
+
+// Iterate through the result set and create a list of messages
+List<Message> messages = new ArrayList<>();
+while (rs.next()) {
+    // Create a new message object and set its values from the result set
+    Message message = new Message();
+    message.setSender(rs.getString("sender"));
+    message.setReceiver(rs.getString("receiver"));
+    message.setText(rs.getString("text"));
+    messages.add(message);
+}
+// Create a connection to the database
+String url = "jdbc:mysql://localhost:3306/mydatabase";
+String username = "myusername";
+String password = "mypassword";
+Connection conn = DriverManager.getConnection(url, username, password);
+
+// Set the connection to use transactions
+conn.setAutoCommit(false);
+
+try {
+    // Create a prepared statement to insert a message into the database
+    String sql = "INSERT INTO messages (sender, receiver, text) VALUES (?, ?, ?)";
+    PreparedStatement stmt = conn.prepareStatement(sql);
+
+    // Set the values of the prepared statement
+    stmt.setString(1, message.getSender());
+    stmt.setString(2, message.getReceiver());
+    stmt.setString(3, message.getText());
+
+    // Execute the statement
+    stmt.executeUpdate();
+
+    // Create a prepared statement to select the inserted message from the database
+    sql = "SELECT * FROM messages WHERE sender = ? AND receiver = ? AND text = ?";
+    stmt = conn.prepareStatement(sql);
+
+    // Set the values of the prepared statement
+    stmt.setString(1, message.getSender());
+    stmt.setString(2, message.getReceiver());
+    stmt.setString(3, message.getText());
+
+    // Execute the statement and get the result set
+    ResultSet rs = stmt.executeQuery();
+
+    // Check if the message was inserted and retrieved successfully
+    if (rs.next()) {
+        // If the message was found, commit the transaction
+        conn.commit();
+    } else {
+        // If the message was not found, roll back the transaction
+        conn.rollback();
+    }
+} catch (SQLException e) {
+    // If there is an exception, roll back the transaction
+    conn.rollback();
+} finally {
+    // Reset the connection to not use transactions
+    conn.setAutoCommit(true);
+}
+
+try {
+    // Create a prepared statement to insert a message into the database
+    String sql = "INSERT INTO messages (sender, receiver, text) VALUES (?, ?, ?)";
+    PreparedStatement stmt = conn.prepareStatement(sql);
+
+    // Set the values of the prepared statement
+    stmt.setString(1, message.getSender());
+    stmt.setString(2, message.getReceiver());
+    stmt.setString(3, message.getText());
+
+    // Execute the statement
+    stmt.executeUpdate();
+} catch (SQLException e) {
+    // If there is an exception, log the error and show a message to the user
+    Log.e(TAG, "Error inserting message", e);
+    showError("Error inserting message");
+}
+
+
+
+
